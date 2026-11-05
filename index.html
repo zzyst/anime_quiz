@@ -1,0 +1,1665 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f4f7fa">
+<title>测一测你是哪部动漫里的谁</title>
+<meta name="description" content="测一测你是哪部动漫里的谁，看看你的灵魂落在哪个故事里。">
+<style>
+/* ==========================================================
+   测一测你是哪部动漫里的谁 — 视觉层
+   ========================================================== */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #aedcf7;
+  --bg2: #c9e8fb;
+  --pink: #3b8fd6;
+  --lav: #4a95d6;
+  --ink: #1c3a55;
+  --ink2: #3d5d7d;
+  --ink3: #55718f;
+  --line: rgba(40, 90, 140, 0.14);
+  --card: rgba(255, 255, 255, 0.55);
+  --accent: #3b8fd6;
+  --ac: #3b8fd6;
+  --ac-light: #5aa7e6;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
+               "Microsoft YaHei", "Segoe UI", sans-serif;
+  line-height: 1.7;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+.bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: #f4f7fa url("bg.jpg") center / cover no-repeat;
+}
+
+/* 柔化遮罩：让前景文字与卡片更清晰、统一 */
+.bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0.14) 45%, rgba(255,255,255,0.32) 100%);
+}
+
+/* ---------- 布局 ---------- */
+.wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 660px;
+  margin: 0 auto;
+  padding: 56px 22px 80px;
+}
+
+.screen { display: none; }
+
+.screen.is-active {
+  display: block;
+  animation: fadeUp 0.55s cubic-bezier(.22, .9, .25, 1) forwards;
+}
+
+#s-start.is-active {
+  min-height: calc(100vh - 136px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+}
+
+#s-start .btn-primary { align-self: flex-start; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- 封面 ---------- */
+.kicker {
+  font-size: 11px;
+  letter-spacing: 0.34em;
+  color: var(--pink);
+  text-transform: uppercase;
+  margin-bottom: 22px;
+  font-weight: 600;
+}
+
+#s-start h1 {
+  font-size: clamp(34px, 8.6vw, 52px);
+  line-height: 1.16;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(120deg, #0f3050 10%, #1f5b92 55%, #2f7cbc 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 22px;
+}
+
+.sub {
+  color: var(--ink2);
+  font-size: 14.5px;
+  line-height: 1.9;
+  margin-bottom: 30px;
+}
+
+.emoji-strip {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2px;
+  margin-bottom: 36px;
+  padding: 14px 8px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.55);
+  overflow: hidden;
+}
+
+.emoji-strip span {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  line-height: 1;
+  opacity: 0.75;
+  filter: grayscale(0.1);
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.emoji-strip:hover span { opacity: 1; }
+
+/* ---------- 按钮 ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  padding: 15px 40px;
+  border-radius: 999px;
+  transition: transform 0.25s cubic-bezier(.2, .9, .3, 1.2), box-shadow 0.3s, opacity 0.2s;
+  letter-spacing: 0.02em;
+}
+
+.btn-primary {
+  background: linear-gradient(115deg, #5aa8f0, #3f7fd6);
+  color: #fff;
+  box-shadow: 0 10px 32px -10px rgba(90, 168, 240, 0.7), inset 0 1px 0 rgba(255,255,255,.25);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 42px -12px rgba(90, 168, 240, 0.85), inset 0 1px 0 rgba(255,255,255,.3);
+}
+
+.btn-primary:active { transform: translateY(0) scale(0.985); }
+
+.btn-ghost {
+  background: rgba(255, 255, 255, 0.6);
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+
+.btn-ghost:hover { background: rgba(255, 255, 255, 0.85); transform: translateY(-2px); }
+
+.hint {
+  margin-top: 18px;
+  font-size: 12.5px;
+  color: var(--ink3);
+}
+
+/* ---------- 提取码 ---------- */
+.gate {
+  margin-bottom: 22px;
+}
+.gate-label {
+  display: block;
+  font-size: 13px;
+  color: var(--ink2);
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+.gate-input {
+  width: 100%;
+  max-width: 280px;
+  padding: 12px 16px;
+  font-size: 20px;
+  letter-spacing: 0.5em;
+  text-align: center;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.85);
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+  font-variant-numeric: tabular-nums;
+}
+.gate-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(59, 143, 214, 0.15);
+}
+.gate-input::placeholder {
+  color: var(--ink3);
+  letter-spacing: 0.1em;
+  font-size: 14px;
+}
+.gate-err {
+  display: none;
+  margin-top: 8px;
+  font-size: 12.5px;
+  color: #d64545;
+}
+.gate-err.show { display: block; }
+.gate-input.err { border-color: #d64545; animation: shake .3s; }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* ---------- 答题 ---------- */
+.qbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 34px;
+}
+
+.qcount {
+  font-size: 13px;
+  color: var(--ink2);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.qcount span:first-child { color: var(--ink); font-weight: 700; font-size: 17px; }
+
+.track {
+  flex: 1;
+  height: 4px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.55);
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #6ab4f5, #3f7fd6);
+  transition: width 0.5s cubic-bezier(.22, .9, .25, 1);
+  box-shadow: 0 0 12px rgba(106, 180, 245, 0.6);
+}
+
+.linkbtn {
+  background: none;
+  border: none;
+  color: var(--ink3);
+  font-family: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+  padding: 6px 2px;
+  transition: color 0.2s;
+  white-space: nowrap;
+}
+
+.linkbtn:hover { color: var(--pink); }
+
+.qcard.anim { animation: cardIn 0.42s cubic-bezier(.22, .9, .25, 1) both; }
+
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.qindex {
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  color: var(--lav);
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.qtext {
+  font-size: clamp(21px, 4.6vw, 27px);
+  line-height: 1.55;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: 28px;
+}
+
+.opts { display: flex; flex-direction: column; gap: 11px; }
+
+.opt {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  text-align: left;
+  padding: 16px 18px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.6;
+  cursor: pointer;
+  transition: border-color 0.22s, background 0.22s, transform 0.22s, box-shadow 0.22s;
+}
+
+.opt:hover {
+  border-color: rgba(108, 183, 255, 0.5);
+  background: rgba(108, 183, 255, 0.07);
+  transform: translateX(3px);
+}
+
+.opt-key {
+  flex: 0 0 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--ink2);
+  transition: all 0.22s;
+}
+
+.opt:hover .opt-key { color: var(--pink); border-color: rgba(108,183,255,.45); }
+
+.opt.picked {
+  border-color: rgba(108, 183, 255, 0.85);
+  background: linear-gradient(90deg, rgba(108, 183, 255, 0.16), rgba(63, 127, 214, 0.09));
+  box-shadow: 0 0 0 1px rgba(108, 183, 255, 0.25), 0 8px 26px -14px rgba(108, 183, 255, 0.8);
+}
+
+.opt.picked .opt-key {
+  background: linear-gradient(135deg, #6ab4f5, #3f7fd6);
+  border-color: transparent;
+  color: #fff;
+}
+
+.opt-text { flex: 1; }
+
+.back { margin-top: 22px; }
+
+/* ---------- 结果页 ---------- */
+.res-kicker {
+  text-align: center;
+  font-size: 11.5px;
+  letter-spacing: 0.32em;
+  color: #3d5d7d;
+  margin-bottom: 26px;
+}
+
+.hero { text-align: center; }
+
+.avatar {
+  width: 108px;
+  height: 108px;
+  margin: 0 auto 22px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 46px;
+  line-height: 1;
+  position: relative;
+  background:
+    radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.85), transparent 58%),
+    linear-gradient(160deg, #dff0fc 0%, #c5e4fa 62%, #b0d8f5 100%);
+  box-shadow:
+    0 0 0 1px rgba(59, 143, 214, 0.3),
+    0 0 0 7px rgba(255, 255, 255, 0.5),
+    0 16px 42px -20px rgba(59, 143, 214, 0.55);
+  animation: pop 0.7s cubic-bezier(.2, .9, .3, 1.25) both;
+}
+
+@keyframes pop {
+  from { opacity: 0; transform: scale(0.75); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.hero-name {
+  font-size: clamp(28px, 6.4vw, 38px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  background: linear-gradient(120deg, #12395c, #2b6ea8 95%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-anime {
+  color: var(--ink2);
+  font-size: 14.5px;
+  margin-top: 6px;
+  letter-spacing: 0.04em;
+}
+
+.tags {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.tags span {
+  font-size: 12px;
+  padding: 5px 13px;
+  border-radius: 999px;
+  border: 1px solid rgba(59, 143, 214, 0.35);
+  background: rgba(255, 255, 255, 0.75);
+  color: #1f5b92;
+  letter-spacing: 0.04em;
+}
+
+/* 环形 */
+.ring {
+  position: relative;
+  width: 168px;
+  margin: 36px auto 40px;
+  text-align: center;
+}
+
+.ring svg { width: 100%; transform: rotate(-90deg); display: block; }
+
+.ring-bg { fill: none; stroke: rgba(59, 143, 214, 0.15); stroke-width: 6; }
+
+.ring-fg {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 7;
+  stroke-linecap: round;
+  filter: drop-shadow(0 1px 2px rgba(59, 143, 214, 0.25));
+}
+
+.ring-num {
+  position: absolute;
+  top: 50%; left: 0; right: 0;
+  transform: translateY(-58%);
+  font-variant-numeric: tabular-nums;
+}
+
+.ring-num b {
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: linear-gradient(120deg, #12395c, #2b6ea8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.ring-num i { font-style: normal; font-size: 15px; color: var(--ink2); margin-left: 2px; }
+
+.ring-cap {
+  font-size: 11.5px;
+  letter-spacing: 0.2em;
+  color: #4d6c8a;
+  margin-top: 10px;
+}
+
+/* 面板 */
+.panel {
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: linear-gradient(160deg, rgba(255,255,255,0.72), rgba(255,255,255,0.45));
+  padding: 26px 24px;
+  margin-bottom: 18px;
+  box-shadow: 0 8px 28px -18px rgba(40, 90, 140, 0.5);
+  backdrop-filter: blur(8px);
+}
+
+.panel-t {
+  font-size: 11.5px;
+  letter-spacing: 0.24em;
+  color: var(--ink3);
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.desc {
+  font-size: 15.5px;
+  line-height: 1.95;
+  color: #2c4a66;
+}
+
+.quote {
+  margin-top: 18px;
+  padding: 14px 0 4px 18px;
+  border-left: 2px solid rgba(59, 143, 214, 0.55);
+  font-size: 15px;
+  color: #2b6ea8;
+  font-style: italic;
+  letter-spacing: 0.02em;
+}
+
+/* 雷达 */
+.radar-wrap { margin-top: 6px; }
+
+.radar { width: 100%; max-width: 340px; display: block; margin: 0 auto; }
+
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: 22px;
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--ink2);
+}
+
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+
+.dot { width: 9px; height: 9px; border-radius: 3px; display: inline-block; }
+
+.dot.you { background: var(--pink); }
+.dot.him { background: var(--accent); }
+
+/* 其他匹配 */
+.minis { display: flex; flex-direction: column; gap: 10px; }
+
+.mini {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 12px 14px;
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--line);
+}
+
+.mini-av {
+  width: 38px; height: 38px;
+  flex: 0 0 38px;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  border: 1px solid rgba(59, 143, 214, 0.2);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.mini-info { display: flex; flex-direction: column; line-height: 1.45; min-width: 0; }
+
+.mini-info b { font-size: 14px; font-weight: 600; }
+
+.mini-info span { font-size: 12px; color: var(--ink3); }
+
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+.actions .btn { flex: 1; min-width: 140px; padding: 15px 24px; }
+
+.foot {
+  margin-top: 34px;
+  text-align: center;
+  font-size: 11.5px;
+  color: var(--ink3);
+  line-height: 1.8;
+}
+
+/* ---------- 移动端 ---------- */
+@media (max-width: 480px) {
+  .wrap { padding: 40px 18px 64px; }
+  .panel { padding: 22px 18px; border-radius: 17px; }
+  .opt { padding: 15px 15px; font-size: 14.5px; }
+  .emoji-strip { padding: 12px 6px; }
+  .emoji-strip span { flex: 0 0 34px; width: 34px; height: 34px; font-size: 16px; }
+  .actions .btn { flex: 1 1 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+</style>
+</head>
+<body>
+
+<div class="bg" aria-hidden="true"></div>
+
+<main class="wrap">
+
+  <!-- 封面 -->
+  <section class="screen is-active" id="s-start">
+    <p class="kicker">Anime Soul Match</p>
+    <h1>测一测<br>你是哪部动漫里的谁</h1>
+    <p class="sub">看看你的灵魂，落在哪个故事里</p>
+
+    <div class="gate">
+      <label class="gate-label" for="gateCode">请输入提取码</label>
+      <input class="gate-input" id="gateCode" type="text" inputmode="numeric" maxlength="4"
+             placeholder="4 位数字" autocomplete="off">
+      <p class="gate-err" id="gateErr">提取码错误，再试一次</p>
+    </div>
+
+    <button class="btn btn-primary" id="btnStart">开始测试</button>
+    <p class="hint">凭第一直觉作答，别想太久</p>
+  </section>
+
+  <!-- 答题 -->
+  <section class="screen" id="s-quiz">
+    <div class="qbar">
+      <div class="qcount"><span id="qNow">1</span> / <span id="qTotal">25</span></div>
+      <div class="track"><div class="fill" id="qFill"></div></div>
+      <button class="linkbtn" id="btnQuit">重来</button>
+    </div>
+
+    <div class="qcard" id="qCard">
+      <p class="qindex" id="qIndex">Q1</p>
+      <h2 class="qtext" id="qText"></h2>
+      <div class="opts" id="qOpts"></div>
+    </div>
+
+    <button class="linkbtn back" id="btnBack">← 上一题</button>
+  </section>
+
+  <!-- 结果 -->
+  <section class="screen" id="s-result">
+    <div id="resultBody"></div>
+  </section>
+
+</main>
+
+<script>
+/* ==========================================================
+   测一测你是哪部动漫里的谁
+   40 角色 / 25 题 / 8 维性格向量 / 中心化余弦相似度
+   ========================================================== */
+
+const DIMS = ['warm', 'calm', 'strong', 'loyal', 'dark', 'lively', 'distant', 'obsess'];
+
+const DIM_LABEL = {
+  warm: '温柔', calm: '理智', strong: '强势', loyal: '专一',
+  dark: '腹黑', lively: '外放', distant: '疏离', obsess: '执着'
+};
+
+/* ---------------- 角色库：40 个不同作品 ---------------- */
+const CHARS = [
+  {
+    n: '塞巴斯蒂安·米卡利斯', a: '黑执事', e: '🕯️', c: '#6f9fd6',
+    t: ['完美主义', '腹黑', '优雅'],
+    d: '永远得体，永远领先三步。你把“不慌”刻进了骨子里，越乱的场合反而越从容。别人以为你冷，其实你只是不愿意把力气浪费在无意义的情绪上。',
+    q: '完美不是要求，是习惯。',
+    m: '你习惯用从容掩盖锋利——真正的掌控，从来不需要大声。',
+    v: [5, 9, 7, 8, 10, 3, 7, 5]
+  },
+  {
+    n: '鲁路修·兰佩路基', a: '叛逆的鲁路修', e: '♟️', c: '#5b88c9',
+    t: ['谋略家', '孤注一掷', '骄傲'],
+    d: '你脑子转得比嘴快，做计划的时候连别人的反应都算进去了。看起来骄傲，其实是把所有退路都堵死之后，逼自己往前走。',
+    q: '棋子落下之前，胜负就已经定了。',
+    m: '你不怕被误解——你怕的是失败。为了目的地，你舍得绕远路。',
+    v: [3, 10, 10, 4, 9, 4, 6, 10]
+  },
+  {
+    n: '云雀恭弥', a: '家庭教师', e: '🐦', c: '#7f9cc0',
+    t: ['孤高', '好战', '不合群'],
+    d: '你不合群，但不是不会。人一多你就想走，因为你觉得多数对话都是浪费时间。你只对“变强”这件事有兴趣，别的一概不关心。',
+    q: '群聚者，咬杀。',
+    m: '你身上有种不需要观众的气场。一个人站着，也像一支队伍。',
+    v: [2, 6, 10, 3, 4, 5, 10, 6]
+  },
+  {
+    n: '渚薰', a: '新世纪福音战士', e: '🎹', c: '#8fb8e8',
+    t: ['温柔', '超然', '宿命感'],
+    d: '你温柔得有点不真实。你好像天生就懂得原谅，连别人的恶意都能理解成别的什么。你不是没有底线，只是把底线设在了很远的地方。',
+    q: '遇见你，是我来到这个世界的意义。',
+    m: '你身上有一种近乎透明的善意——不索取，也不强求回应。',
+    v: [10, 8, 3, 10, 1, 4, 4, 8]
+  },
+  {
+    n: '利威尔·阿克曼', a: '进击的巨人', e: '🧹', c: '#7a95b5',
+    t: ['嘴硬', '洁癖', '护短'],
+    d: '你说话不客气，但做的事比谁都多。你讨厌拖泥带水，讨厌自我感动，也讨厌别人把“尽力了”当借口。你的关心永远藏在“别碍事”后面。',
+    q: '别后悔。后悔只会让你变弱。',
+    m: '你的严厉是一种保护色。真正在意的时候，你会直接动手，不说好听的。',
+    v: [6, 7, 10, 9, 4, 2, 7, 8]
+  },
+  {
+    n: '及川彻', a: '排球少年', e: '🏐', c: '#6f9fd6',
+    t: ['努力型天才', '控场', '自恋'],
+    d: '你很努力，但绝不让别人看出来。表面上玩世不恭、爱逗人，背地里一个人练到半夜。你要的不是被夸，是被承认“我很强”。',
+    q: '天才也需要努力，那努力的人凭什么输。',
+    m: '你懂怎么让人喜欢你，也懂怎么让人低估你。这两件事你都做得很好。',
+    v: [5, 6, 8, 6, 6, 9, 3, 9]
+  },
+  {
+    n: '太宰治', a: '文豪野犬', e: '📖', c: '#7fa5d8',
+    t: ['洞察', '慵懒', '忧郁'],
+    d: '你看人太准了，准到有点烦人。你知道对方下一句要说什么，也知道自己的哪些话会让人心动或心碎。你把悲伤讲成笑话，让别人没法心疼你。',
+    q: '有些事，只能笑着说出来。',
+    m: '你的洞察力像一把刀——平时收着，需要的时候一击就中。',
+    v: [4, 8, 6, 4, 10, 6, 7, 6]
+  },
+  {
+    n: '五条悟', a: '咒术回战', e: '🕶️', c: '#6cb7ff',
+    t: ['玩世不恭', '绝对强者', '护崽'],
+    d: '你有资格任性。你知道自己强，所以不需要证明。你爱玩、爱闹、爱把人逗到跳脚，但真出事的时候，你会站在最前面，还笑着说“交给我”。',
+    q: '因为我最强，所以我说了算。',
+    m: '你的松弛感来自实力。你不需要别人的认可，也懒得解释自己。',
+    v: [5, 7, 10, 4, 7, 10, 4, 3]
+  },
+  {
+    n: '炼狱杏寿郎', a: '鬼灭之刃', e: '🔥', c: '#5a97d6',
+    t: ['热情', '正直', '责任感'],
+    d: '你太热烈了，热烈到有点吵。你相信努力、相信责任、相信“该做的事就要做到最后”。你不擅长察言观色，但你不会在任何时候丢下任何人。',
+    q: '心火不灭，就是活着。',
+    m: '你的热情不是表演，是你真的这么想。这样的人，会让身边的人也变勇敢。',
+    v: [10, 5, 10, 9, 1, 10, 1, 6]
+  },
+  {
+    n: '坂田银时', a: '银魂', e: '🍡', c: '#8aa2be',
+    t: ['懒散', '靠谱', '毒舌'],
+    d: '你懒，穷，嘴还碎。但你有一个优点：真到了要扛的时候，你从来不推。你不在乎别人怎么评价你，你在乎的东西很少，但每一样都很重。',
+    q: '我保护的东西，从开始到现在都没变过。',
+    m: '你看起来最不靠谱，实际上是最后一个走的人。',
+    v: [8, 6, 8, 8, 5, 7, 3, 5]
+  },
+  {
+    n: '罗罗诺亚·索隆', a: '海贼王', e: '⚔️', c: '#63b8d6',
+    t: ['硬汉', '忠诚', '说到做到'],
+    d: '你话不多，方向感极差，但答应的事一定做到。你对“忠诚”的理解很简单：认定了，就不问值不值。你宁可自己受伤，也不愿意让同伴回头。',
+    q: '受伤的地方，会变成我的力量。',
+    m: '你身上有很旧的品质——说到做到，不解释，也不邀功。',
+    v: [6, 7, 9, 10, 2, 4, 6, 7]
+  },
+  {
+    n: '宇智波鼬', a: '火影忍者', e: '🌑', c: '#5f8ed0',
+    t: ['隐忍', '沉默', '牺牲型'],
+    d: '你太擅长一个人扛了，扛到最后连解释都懒得给。你做的事别人未必理解，你也习惯了。你不是冷，你只是把所有的软都收进了看不见的地方。',
+    q: '原谅我，这是最后一次了。',
+    m: '你宁愿被误解，也不愿意让别人承担你的那部分重量。',
+    v: [7, 10, 9, 8, 8, 1, 10, 8]
+  },
+  {
+    n: '爱德华·艾尔利克', a: '钢之炼金术师', e: '⚗️', c: '#6f9fd6',
+    t: ['热血', '理论派', '护短'],
+    d: '你脑子好，脾气也急。谁说你矮你能记一辈子。你相信等价交换，也相信人可以靠自己的手，把失去的东西换回来。',
+    q: '没有牺牲，就没有得到。',
+    m: '你不服输，但不是嘴硬那种不服输——你会真的去把它做成。',
+    v: [8, 7, 6, 9, 2, 8, 2, 8]
+  },
+  {
+    n: '折木奉太郎', a: '冰菓', e: '☕', c: '#93a9c4',
+    t: ['节能主义', '怕麻烦', '大智若愚'],
+    d: '你的能量只花在必要的地方。别人以为你懒，其实你只是觉得百分之九十的事不值得动手。一旦你认真了，速度快得让人反应不过来。',
+    q: '没必要的事不做，必要的事尽快做。',
+    m: '你的“节能”是一种筛选机制。你不是不上心，你只是不肯浪费。',
+    v: [4, 10, 3, 5, 4, 2, 8, 2]
+  },
+  {
+    n: '冈部伦太郎', a: '命运石之门', e: '⏳', c: '#6fd2ea',
+    t: ['中二', '执着', '嘴硬心软'],
+    d: '你中二，你浮夸，你自称疯狂科学家。但这些壳子下面，是无数次一个人扛着结果往前走的固执。你把温柔藏在最吵的地方。',
+    q: '这一切，都是命运石之门的选择。',
+    m: '你用夸张掩饰认真。别人笑你的时候，你其实比谁都清醒。',
+    v: [7, 4, 4, 9, 5, 7, 4, 9]
+  },
+  {
+    n: '杀生丸', a: '犬夜叉', e: '🌸', c: '#8fb8e8',
+    t: ['高傲', '冷漠', '无声守护'],
+    d: '你天生就把“我不需要”写在脸上。你不解释，不示好，不迁就。但你会在没人注意的角落，把该做的事做完，然后头也不回地走。',
+    q: '我的道路，与任何人无关。',
+    m: '你身上有一种不需要被人喜欢的贵气。你只对极少数人软下来。',
+    v: [2, 8, 10, 6, 4, 1, 10, 6]
+  },
+  {
+    n: '工藤新一', a: '名侦探柯南', e: '🔍', c: '#4a8fd6',
+    t: ['推理狂', '自信', '正义感'],
+    d: '你对“搞清楚”有瘾。别人糊弄你，你会难受一整天。你自信到有点欠揍，但你的自信基本都站得住脚。你相信真相，也相信该有人站出来。',
+    q: '真相只有一个。',
+    m: '你有很强的是非感，遇到不对劲的事，你没法当没看见。',
+    v: [7, 8, 6, 7, 3, 6, 3, 9]
+  },
+  {
+    n: '黑羽快斗', a: '魔术快斗', e: '🎩', c: '#b6c8dc',
+    t: ['华丽', '爱玩', '双面'],
+    d: '你在人群里发光，而且你知道。你喜欢看别人吃惊的表情，喜欢把一切变成表演。但台上那个嚣张的你，和台下那个认真的你，是同一个人。',
+    q: '掌声响起之前，魔术就已经完成了。',
+    m: '你天生会演。你知道怎么用轻松的样子，让别人放下戒心。',
+    v: [5, 7, 7, 5, 6, 10, 4, 4]
+  },
+  {
+    n: '灵幻新隆', a: '灵能百分百', e: '💼', c: '#6f9fd6',
+    t: ['嘴皮子', '装模作样', '心软'],
+    d: '你嘴皮子功夫一流，能把白的说成彩虹色。你看起来像个骗子，但你从不真的骗重要的人。你擅长用满不在乎的样子，把别人从坑里拉出来。',
+    q: '我是灵能力者，灵幻新隆。',
+    m: '你很会说话，但更会在关键的时候做对的事——这两样一起才难得。',
+    v: [8, 8, 4, 6, 9, 8, 3, 3]
+  },
+  {
+    n: '埼玉', a: '一拳超人', e: '👊', c: '#72a3d8',
+    t: ['淡然', '无欲', '强到无聊'],
+    d: '你已经过了“想要被认可”的阶段。你有碾压一切的实力，却过着最普通的日子。别人着急的事你都不急，因为你知道大部分事情根本没那么重要。',
+    q: '我只想当个兴趣使然的英雄。',
+    m: '你的淡定不是装的。你早就想明白了，什么值得认真，什么不值得。',
+    v: [6, 9, 10, 6, 2, 3, 8, 2]
+  },
+  {
+    n: '空条承太郎', a: 'JOJO的奇妙冒险', e: '🐬', c: '#4a82c8',
+    t: ['沉默寡言', '强硬', '护短'],
+    d: '你话少，别人经常猜错你的意思。你不爱解释，觉得行动比语言快。你护短得很，但从来不说“我在保护你”这种话。',
+    q: '有些话，说出来就轻了。',
+    m: '你靠做的，不靠说的。沉默在你这里不是冷漠，是留白。',
+    v: [6, 8, 10, 9, 4, 2, 8, 6]
+  },
+  {
+    n: '金木研', a: '东京喰种', e: '📚', c: '#6b94c8',
+    t: ['温柔', '读书人', '被逼黑化'],
+    d: '你温柔，爱读书，不擅长拒绝。你一直想好好活着，但世界老是逼你选。真正压垮你的从来不是痛，是“我又什么都做不了”。',
+    q: '如果我不能保护你，那我就变强。',
+    m: '你心软，但你不弱。你的温柔是自己扛出来的，不是天生的。',
+    v: [9, 5, 3, 8, 6, 3, 7, 8]
+  },
+  {
+    n: '佐野万次郎', a: '东京复仇者', e: '🏍️', c: '#72a3d8',
+    t: ['天真', '暗面', '领袖'],
+    d: '你笑起来像个孩子，安静下来像另一个人。你身上有两种力量：一种让人想跟着你的天真，一种让人不敢靠近的暗。你选前者，但你清楚后者一直在。',
+    q: '我不会让任何人再失去。',
+    m: '你笑得越轻，心里的东西越重。你不想让人担心，所以从不全说。',
+    v: [8, 3, 10, 10, 9, 7, 3, 10]
+  },
+  {
+    n: '洁世一', a: '蓝色监狱', e: '⚽', c: '#5fc2e0',
+    t: ['野心', '自我中心', '吞噬型'],
+    d: '你的目标非常清楚，清楚到有点伤人。你不介意被讨厌，也不介意一个人走。你要的不是“一起加油”，是“我要赢”。',
+    q: '我要成为那个改变比赛的人。',
+    m: '你的野心是干净的。你不装谦虚，也不给自己留退路。',
+    v: [2, 6, 9, 3, 7, 5, 7, 10]
+  },
+  {
+    n: '赤司征十郎', a: '黑子的篮球', e: '👑', c: '#6b94c8',
+    t: ['帝王气场', '完美主义', '双面'],
+    d: '你身上有“必须赢”的东西，从小被刻进去的。你要求完美，对自己尤其狠。你看起来很稳，其实你一直在跟一个看不见的对手比赛。',
+    q: '胜利，是理所当然的。',
+    m: '你的强势是自我要求溢出来的。你受不了“差不多就行”。',
+    v: [5, 9, 10, 6, 7, 3, 7, 8]
+  },
+  {
+    n: '七濑遥', a: 'Free!', e: '🌊', c: '#54aee4',
+    t: ['沉默', '固执', '水属性'],
+    d: '你沉默，固执，只对自己的世界感兴趣。别人觉得你难接近，其实你只是不想说话。你的感情都藏在行动里——比如记得每个人的习惯。',
+    q: '我只游自由泳。',
+    m: '你不爱表达，但你的在意全在细节里。懂的人自然懂。',
+    v: [5, 8, 5, 6, 2, 2, 9, 7]
+  },
+  {
+    n: '蓝忘机', a: '魔道祖师', e: '🎵', c: '#9cc6f0',
+    t: ['清冷', '规矩', '深情隐忍'],
+    d: '你规矩、克制、话少。你把所有激烈的东西都压在底下，只留一个“嗯”给别人。但一旦认定了谁，你会用一辈子守着他，不问原因。',
+    q: '有些答案，不必说出口。',
+    m: '你的深情是安静的。你不说，但你一直在。',
+    v: [6, 9, 7, 10, 2, 1, 10, 9]
+  },
+  {
+    n: '花城', a: '天官赐福', e: '🦋', c: '#6b94c8',
+    t: ['痴情', '戏谑', '绝对忠诚'],
+    d: '你热烈，直白，还有点疯。你不在意世界怎么看你，只在意那一个人怎么看你。你可以为一个人做到任何事，而且不觉得这是牺牲。',
+    q: '为你，灯明三千。',
+    m: '你爱得毫不掩饰。对你来说，“值得”这两个字只跟一个人有关。',
+    v: [8, 5, 6, 10, 5, 8, 3, 10]
+  },
+  {
+    n: '须王环', a: '樱兰高校男公关部', e: '🌹', c: '#9fc4e8',
+    t: ['王子殿下', '戏剧化', '温柔'],
+    d: '你是天生的王子役——会讲话，会照顾人，会把气氛调到刚好。你看起来很浮夸，其实非常认真。你的温柔是主动的，不是被动的。',
+    q: '请让我成为你的王子。',
+    m: '你懂得让人舒服。你的体贴不是讨好，是真的希望大家开心。',
+    v: [10, 5, 5, 8, 3, 9, 2, 5]
+  },
+  {
+    n: '碓冰拓海', a: '会长是女仆大人', e: '🍰', c: '#94b6d8',
+    t: ['全能', '捉弄', '神秘'],
+    d: '你什么都会，但什么都表现得很随意。你喜欢逗人，喜欢看对方炸毛，但你的每一步都是有目的的。你不是神秘，你只是懒得全都讲。',
+    q: '我只对你有兴趣。',
+    m: '你有很强的能力，但你更喜欢用轻松的方式和人相处。',
+    v: [7, 8, 6, 6, 8, 6, 5, 4]
+  },
+  {
+    n: '巴卫', a: '元气少女缘结神', e: '🦊', c: '#72a3d8',
+    t: ['傲娇', '毒舌', '护妻'],
+    d: '你毒舌、傲慢、嘴上没一句好话。但你会在对方睡着的时候守着，会在下雨前把伞放好。你的温柔从不让人看见，因为看见了就不酷了。',
+    q: '我是你的神使，仅此而已。',
+    m: '你的别扭是保护壳。你越在意，越嘴上不认。',
+    v: [7, 6, 7, 9, 7, 5, 5, 7]
+  },
+  {
+    n: '锥生零', a: '吸血鬼骑士', e: '🩸', c: '#93a9c4',
+    t: ['冷硬', '创伤', '执着'],
+    d: '你身上有旧伤，而且你不打算让它好。你对世界保持警惕，对温柔保持怀疑。你不是不会爱，你是不敢再赌一次。',
+    q: '我不会再失去任何一个重要的人。',
+    m: '你把人推远，是怕自己又一次来不及。',
+    v: [3, 5, 7, 8, 6, 1, 9, 9]
+  },
+  {
+    n: '周防尊', a: 'K', e: '🦁', c: '#6b94c8',
+    t: ['慵懒', '野性', '为王'],
+    d: '你懒得解释，也懒得争。你身上有一种原始的、不用修饰的力量感。你不做领袖，但所有人都愿意跟你。你只在意少数几件事，其余的随便。',
+    q: '我只想守住我的地方。',
+    m: '你的野性是内敛的。不叫的狗最凶，说的就是你。',
+    v: [6, 5, 10, 9, 4, 3, 6, 6]
+  },
+  {
+    n: '折原临也', a: '无头骑士异闻录', e: '🎧', c: '#7fa0c8',
+    t: ['情报贩子', '玩世不恭', '爱人类'],
+    d: '你把世界当棋盘，把人当变量。你爱看人做出选择，也爱推一把。你的笑不一定是善意，但你的兴趣一定是真的。',
+    q: '我爱着人类，全部的人类。',
+    m: '你对人的好奇心近乎偏执。你喜欢观察，胜过参与。',
+    v: [1, 8, 4, 2, 10, 10, 7, 8]
+  },
+  {
+    n: '冲田总司', a: '薄樱鬼', e: '🗡️', c: '#a5bfe0',
+    t: ['笑面', '剑客', '病弱'],
+    d: '你笑的时候最多，也就是说你藏得最多。你可以在玩笑里藏刀，也可以在刀后藏温柔。你知道自己的时间有限，所以活得比谁都用力。',
+    q: '就算只剩一秒，我也要笑着挥刀。',
+    m: '你用轻松的样子处理沉重的事。别人以为你没事，其实你只是不想让人担心。',
+    v: [6, 6, 7, 9, 9, 8, 3, 7]
+  },
+  {
+    n: '劳埃德·福杰', a: 'SPY×FAMILY', e: '🕵️', c: '#6fb8d8',
+    t: ['全能间谍', '演技满分', '顾家'],
+    d: '你能力顶配，演技满分。你能在十秒内变成另一个人，但你最珍惜的身份，是那个笨手笨脚的普通人。你想要的东西其实很简单：一个家。',
+    q: '为了任务，也为了这个家。',
+    m: '你很擅长“扮演”，但你在扮演里动了真感情——这点最像你。',
+    v: [8, 9, 8, 7, 6, 6, 4, 6]
+  },
+  {
+    n: '壬氏', a: '药屋少女的呢喃', e: '🏮', c: '#8fb0e0',
+    t: ['美貌', '腹黑', '痴情'],
+    d: '你美得不像话，笑得也不像真的。你说话总留一半，看人总多看一眼。你掌控欲强，但藏得很好。你对那个人的在意，连自己都要瞒。',
+    q: '你不必知道原因，只需要知道结果。',
+    m: '你聪明、好看、有心机，但你的心机最后都用来护一个人。',
+    v: [6, 8, 7, 9, 10, 5, 5, 9]
+  },
+  {
+    n: '辛美尔', a: '葬送的芙莉莲', e: '🌟', c: '#7fb8d0',
+    t: ['温柔勇者', '自恋', '留下传说'],
+    d: '你温柔，自恋，还爱讲漂亮话。但你留下的每一个痕迹都是真的。你知道自己不会活得最久，所以你选择成为别人记忆里最好的那一段。',
+    q: '我只是想在她心里，留下一点什么。',
+    m: '你想被人记住，但你会用“让别人开心”的方式去被记住。',
+    v: [9, 6, 5, 8, 3, 7, 2, 8]
+  },
+  {
+    n: '宫村伊澄', a: '堀与宫村', e: '🧷', c: '#9db2ca',
+    t: ['外冷内热', '反差', '笨拙'],
+    d: '你外表有点阴，戴着耳环，看起来不好接近。但脱下那身壳，你其实很软、很笨、很爱笑。你不在乎别人的印象，你只在乎那几个人的看法。',
+    q: '在你面前，我可以不用装。',
+    m: '你有两层——外面的冷和里面的暖。只有很少的人能看到后面那层。',
+    v: [9, 6, 4, 8, 3, 5, 6, 5]
+  },
+  {
+    n: '夏目贵志', a: '夏目友人帐', e: '🌿', c: '#a8c6e8',
+    t: ['温柔', '孤独', '善良'],
+    d: '你温柔到让人心疼。你受了那么多委屈，却还是愿意对世界好。你不喜欢麻烦别人，也不擅长索取，你习惯把“我没事”说得像真的。',
+    q: '我想保护那些重要的事物。',
+    m: '你的善良不是天真，是你知道了世界的难看之后，还是选了温柔。',
+    v: [10, 8, 4, 8, 2, 4, 6, 5]
+  }
+];
+
+/* ---------------- 25 道题：日常 6 / 怪事场景 13 / 关系内心 6 ---------------- */
+const QUESTIONS = [
+  {
+    q: '被人当面夸，你会？',
+    o: [
+      { t: '大方接受，我知道我很好', v: { strong: 3, lively: 3 } },
+      { t: '有点不好意思，赶紧换个话题', v: { warm: 2, distant: 2 } },
+      { t: '嘴上谦虚，心里记下了', v: { dark: 3, calm: 2 } },
+      { t: '会怀疑对方是不是有什么目的', v: { dark: 3, distant: 2 } },
+      { t: '反过来也夸对方一句，礼尚往来', v: { warm: 2, lively: 2 } },
+      { t: '说"谢谢"，然后继续做自己的事', v: { calm: 2, distant: 1 } }
+    ]
+  },
+  {
+    q: '有人当众指出你的错误，你的第一反应是？',
+    o: [
+      { t: '当场就回，我不吃这一套', v: { strong: 4, lively: 1, dark: 1 } },
+      { t: '先冷静想一遍，他说得对不对', v: { calm: 4, obsess: 1 } },
+      { t: '表面笑着接受，心里记下这笔账', v: { dark: 4, calm: 2 } },
+      { t: '有点难受，回去一个人慢慢消化', v: { distant: 3, warm: 1, obsess: 1 } },
+      { t: '先认错，回头再私下复盘到底谁对', v: { calm: 3, warm: 1 } },
+      { t: '直接问他：那你觉得该怎么做才对？', v: { strong: 2, calm: 2 } }
+    ]
+  },
+  {
+    q: '你发现有人把你的秘密当谈资讲给别人听，你会？',
+    o: [
+      { t: '当场把话挑明，让所有人都听见', v: { strong: 4, lively: 2 } },
+      { t: '不吵，从今天起这个人从我名单里划掉', v: { dark: 3, distant: 3 } },
+      { t: '私下问清楚：我哪里得罪你了', v: { calm: 3, warm: 1 } },
+      { t: '什么都不说，但这件事我记很久', v: { obsess: 4, distant: 2 } },
+      { t: '直接删掉这个人，连解释都省了', v: { strong: 3, distant: 2 } },
+      { t: '以后不再跟他说任何重要的事', v: { distant: 3, calm: 2, obsess: 1 } }
+    ]
+  },
+  {
+    q: '系统说你可以带走一个能力，只能选一个：',
+    o: [
+      { t: '读心——我想知道他们到底怎么看我', v: { dark: 4, calm: 2, obsess: 1 } },
+      { t: '时间倒流十秒——只要十秒，我就能把话说对', v: { obsess: 4, warm: 1 } },
+      { t: '让任何人第一眼就信任我', v: { warm: 3, lively: 3 } },
+      { t: '让谁也找不到我', v: { distant: 4, strong: 1 } },
+      { t: '瞬移——想去哪就去哪，谁也关不住我', v: { strong: 3, lively: 2 } },
+      { t: '治愈——谁受伤我都能治好', v: { warm: 3, loyal: 2 } }
+    ]
+  },
+  {
+    q: '你穿成了动漫里的一个路人，下一秒就要被主角撞倒在地。你会——',
+    o: [
+      { t: '站起来拍拍灰，笑一下就走了', v: { warm: 2, calm: 2 } },
+      { t: '脸上没表情，心里骂了一句', v: { dark: 3, distant: 2 } },
+      { t: '借机聊两句，说不定是缘分', v: { lively: 4, warm: 1 } },
+      { t: '记住这张脸，以后绕着走', v: { obsess: 3, distant: 2 } },
+      { t: '顺势躺下，讹他一顿午饭', v: { lively: 4, dark: 2 } },
+      { t: '默默拍掉灰，心想"终于有人撞我了"', v: { distant: 3, warm: 1 } }
+    ]
+  },
+  {
+    q: '你一觉醒来，发现自己穿进了昨晚看的那部番里，第一件事是？',
+    o: [
+      { t: '先躲起来，搞清楚剧情走到哪一步了，别踩雷', v: { calm: 4, dark: 2 } },
+      { t: '直接去找主角团，来都来了', v: { lively: 3, strong: 2 } },
+      { t: '先去救那个注定要死的人', v: { warm: 4, loyal: 3 } },
+      { t: '谁都不管，先弄明白"我为什么会在这里"', v: { distant: 3, obsess: 2 } },
+      { t: '找面镜子看看自己长啥样', v: { lively: 3, warm: 1 } },
+      { t: '先确认这是哪一集，还来得及改剧情吗', v: { obsess: 4, calm: 1 } }
+    ]
+  },
+  {
+    q: '魔王把剑递到你手里："杀了勇者，或者看着你的族人死。"',
+    o: [
+      { t: '"两个我都要。"', v: { strong: 4, obsess: 3 } },
+      { t: '救族人，然后一辈子记住这一天', v: { loyal: 4, obsess: 2 } },
+      { t: '先拖住他，一定有第三条路', v: { calm: 4, dark: 2 } },
+      { t: '把剑递回去：让他自己选', v: { calm: 3, distant: 2, warm: 1 } },
+      { t: '反手把剑指向魔王：要死你先死', v: { strong: 4, lively: 1, dark: 1 } },
+      { t: '"勇者是谁？我得先见见他。"', v: { calm: 3, dark: 1, obsess: 1 } }
+    ]
+  },
+  {
+    q: '有人把你和 TA 写成了同人文，还传遍了全校。你看到之后——',
+    o: [
+      { t: '装作不知道，半夜偷偷把每一章都看完', v: { dark: 3, obsess: 3 } },
+      { t: '直接找人理论：谁允许你们写的', v: { strong: 3, lively: 2 } },
+      { t: '觉得挺有意思，还去评论区回复了一句', v: { lively: 4, warm: 1 } },
+      { t: '有点羞耻，但心里其实有一点点开心', v: { warm: 3, distant: 2 } },
+      { t: '把写同人文的人查出来，约出来聊聊', v: { dark: 3, obsess: 2, strong: 1 } },
+      { t: '截图发给 TA：我们被写进故事里了', v: { warm: 2, lively: 2, loyal: 1 } }
+    ]
+  },
+  {
+    q: '在一群人里，你通常是？',
+    o: [
+      { t: '控场的那个，节奏我说了算', v: { strong: 4, lively: 2 } },
+      { t: '最安静的那个，但什么都看在眼里', v: { distant: 3, calm: 2, dark: 1 } },
+      { t: '气氛担当，冷场了我来救', v: { lively: 4, warm: 2 } },
+      { t: '不抢眼，但关键时刻大家会来找我', v: { calm: 2, warm: 2, loyal: 1 } },
+      { t: '看情况，熟人面前放得开，陌生人面前收着', v: { distant: 2, lively: 2, calm: 1 } },
+      { t: '负责吐槽的那个，笑点都是我贡献的', v: { lively: 3, dark: 2 } }
+    ]
+  },
+  {
+    q: '你被反派抓进城堡，他笑着说"你只有两个选择"——',
+    o: [
+      { t: '直接顶回去：凭什么由你替我选', v: { strong: 4, lively: 2 } },
+      { t: '装作顺从，等他自己露出破绽', v: { dark: 4, calm: 3 } },
+      { t: '先想办法把消息传出去', v: { calm: 3, loyal: 2, warm: 1 } },
+      { t: '不吵不闹，默默记住这栋楼的结构', v: { distant: 3, calm: 2, strong: 1 } },
+      { t: '跟他聊天，拖延时间套情报', v: { dark: 3, calm: 2, lively: 1 } },
+      { t: '"我选第三个，你没给的那个。"', v: { lively: 3, strong: 2 } }
+    ]
+  },
+  {
+    q: '分别的时候，你？',
+    o: [
+      { t: '会好好说再见，认真地道别', v: { warm: 3, loyal: 2, calm: 1 } },
+      { t: '装作无所谓，转身才难受', v: { dark: 2, distant: 2, obsess: 1 } },
+      { t: '干脆不告而别，我受不了这个', v: { distant: 3, obsess: 2 } },
+      { t: '会约定再见，然后一直记着', v: { loyal: 3, obsess: 2, warm: 1 } },
+      { t: '笑着说"回头见"，其实一步三回头', v: { warm: 2, loyal: 2 } },
+      { t: '把自己看家的本领/联系方式留给对方', v: { loyal: 3, calm: 2 } }
+    ]
+  },
+  {
+    q: '你更容易被哪种人吸引？',
+    o: [
+      { t: '强大、能罩住人的', v: { strong: 2, warm: 1, loyal: 1 } },
+      { t: '温柔、会好好听你说话的', v: { warm: 3, calm: 2 } },
+      { t: '看不透的、有点危险的', v: { dark: 3, lively: 1 } },
+      { t: '只对你一个人特别的', v: { loyal: 4, obsess: 2 } },
+      { t: '有趣、能让我一直笑的', v: { lively: 3, warm: 2 } },
+      { t: '能跟上我脑回路、懂我的', v: { calm: 2, obsess: 2, warm: 1 } }
+    ]
+  },
+  {
+    q: '你养的猫突然开口说话，第一句是"你太黏人了"。你会？',
+    o: [
+      { t: '"我哪有！"然后继续黏', v: { lively: 3, warm: 2 } },
+      { t: '冷静反问：你到底是什么东西', v: { calm: 4, dark: 1 } },
+      { t: '沉默两秒，说"那你走吧"', v: { distant: 4, obsess: 2 } },
+      { t: '抱住它："那你能不能别走"', v: { warm: 2, loyal: 3 } },
+      { t: '高兴坏了："你终于会说话了！"', v: { lively: 4, warm: 2 } },
+      { t: '先掏出手机录下来，这是奇迹', v: { lively: 3, obsess: 2 } }
+    ]
+  },
+  {
+    q: '看到有人被欺负，你会？',
+    o: [
+      { t: '直接上去拦，不管对面是谁', v: { strong: 3, warm: 2, lively: 2 } },
+      { t: '先判断形势，用最有效的方式解决', v: { calm: 3, dark: 2 } },
+      { t: '事后找到那个人，单独帮他', v: { warm: 3, distant: 1, calm: 1 } },
+      { t: '心里不舒服，但不一定插手', v: { distant: 2, dark: 1, obsess: 1 } },
+      { t: '叫人一起，人多才好办事', v: { lively: 2, loyal: 2, strong: 1 } },
+      { t: '先拍下来留证据，再想办法', v: { calm: 3, obsess: 1, dark: 1 } }
+    ]
+  },
+  {
+    q: '凌晨的便利店，一个戴帽子的人推门进来，掏出了刀。你在货架后面——',
+    o: [
+      { t: '先把身边的人推到后门，自己留在最后', v: { warm: 3, strong: 2, loyal: 2 } },
+      { t: '悄悄按报警器，别惊动他', v: { calm: 4, dark: 2 } },
+      { t: '抄起货架上的东西就上', v: { strong: 4, lively: 3 } },
+      { t: '蹲下不动，脑子里已经在算怎么跑', v: { distant: 3, calm: 2 } },
+      { t: '假装是顾客，慢慢挪到后门再报信', v: { calm: 3, dark: 1 } },
+      { t: '跟店员对个眼神，一起找机会', v: { loyal: 2, calm: 2 } }
+    ]
+  },
+  {
+    q: '你一觉醒来变成了一只猫，还被暗恋的人捡回了家。你会——',
+    o: [
+      { t: '装乖，享受被摸头', v: { warm: 3, lively: 2 } },
+      { t: '高冷不理人，但晚上睡他枕头边', v: { distant: 3, loyal: 3 } },
+      { t: '到处捣乱，看他什么时候能认出来', v: { lively: 3, dark: 2 } },
+      { t: '想办法变回去，不能这样下去', v: { calm: 3, obsess: 2, strong: 1 } },
+      { t: '用猫爪在纸上写字，告诉他我是谁', v: { obsess: 4, loyal: 2 } },
+      { t: '先确认自己帅不帅，猫也看脸', v: { lively: 3, strong: 1 } }
+    ]
+  },
+  {
+    q: '深夜的便利店，一个陌生人对你说："我知道你是谁。"你会——',
+    o: [
+      { t: '"那你说说看。"', v: { strong: 4, calm: 2, lively: 2 } },
+      { t: '笑一下，反问他想要什么', v: { dark: 4, calm: 2 } },
+      { t: '不接话，直接走开', v: { distant: 4, strong: 1 } },
+      { t: '心跳快了半拍，但还是站住了', v: { obsess: 3, calm: 1, warm: 1 } },
+      { t: '掏出手机：我录着呢，你继续说', v: { calm: 3, strong: 2 } },
+      { t: '"巧了，我也知道你是谁。"', v: { lively: 3, dark: 2 } }
+    ]
+  },
+  {
+    q: '周末难得一整天自由，你会怎么过？',
+    o: [
+      { t: '一个人窝着看剧打游戏，谁也别来叫我', v: { distant: 3, calm: 2, dark: 1 } },
+      { t: '约朋友出门，人越多越热闹', v: { lively: 4, warm: 2 } },
+      { t: '安静地做点喜欢的事，看书、画画、做点吃的', v: { warm: 2, calm: 3, obsess: 1 } },
+      { t: '出门找点没试过的事，待着太浪费了', v: { lively: 2, strong: 2, dark: 1 } },
+      { t: '睡到自然醒，剩下的交给心情', v: { distant: 2, calm: 2 } },
+      { t: '把攒着没看的剧一次刷完，谁也别管我', v: { distant: 2, obsess: 2, calm: 1 } }
+    ]
+  },
+  {
+    q: '朋友半夜打电话说"我撑不住了"，你会？',
+    o: [
+      { t: '立刻出门，去他身边', v: { warm: 4, loyal: 2 } },
+      { t: '陪他聊到天亮，把问题一条条拆开', v: { calm: 3, warm: 2, loyal: 1 } },
+      { t: '先问清楚发生了什么，再决定怎么做', v: { calm: 3, dark: 1 } },
+      { t: '不太会说安慰话，但会一直守在旁边', v: { distant: 2, warm: 3, loyal: 2 } },
+      { t: '直接订票冲过去，说什么也要见到人', v: { loyal: 4, warm: 2 } },
+      { t: '约他出来，陪他吃顿好的', v: { warm: 3, lively: 2 } }
+    ]
+  },
+  {
+    q: '你偷偷混进了自己的葬礼，最希望听到哪一句？',
+    o: [
+      { t: '"她从来没让谁失望过。"', v: { loyal: 3, warm: 2, strong: 1 } },
+      { t: '"她活得比谁都痛快。"', v: { lively: 4, strong: 2 } },
+      { t: '"她其实很好，只是从来不说。"', v: { distant: 3, warm: 2, obsess: 1 } },
+      { t: '"她好像一直在等一个人。"', v: { obsess: 4, loyal: 3 } },
+      { t: '"好想再见她一面啊。"', v: { warm: 4, loyal: 1 } },
+      { t: '"下辈子，换我保护她。"', v: { loyal: 4, warm: 2, strong: 1 } }
+    ]
+  },
+  {
+    q: '你被关进了"同一天无限循环"，无论做什么，第二天都会重新开始。你会——',
+    o: [
+      { t: '把所有可能性都试一遍，反正明天重来', v: { lively: 3, obsess: 3, dark: 1 } },
+      { t: '找出循环的规则，一定有破法', v: { calm: 4, dark: 2 } },
+      { t: '去找那个每天都会遇见的陌生人，重新认识一次', v: { warm: 4, loyal: 2 } },
+      { t: '躺平，反正做什么都没有意义', v: { distant: 3, calm: 1 } },
+      { t: '利用循环把没做完的事做到完美', v: { obsess: 4, strong: 1 } },
+      { t: '记录每天的不同，找变量的规律', v: { calm: 4, obsess: 1 } }
+    ]
+  },
+  {
+    q: '主角团邀请你入伙，去做一件大概率会送命的事。你说——',
+    o: [
+      { t: '"算我一个。"等这句话很久了', v: { lively: 3, loyal: 3, strong: 1 } },
+      { t: '"先说清楚，危险程度、分工、撤退方案。"', v: { calm: 4, dark: 1 } },
+      { t: '"不了，我更习惯一个人。"', v: { distant: 4, strong: 2 } },
+      { t: '"我去。但有人受伤，我会先带他走。"', v: { warm: 2, loyal: 4 } },
+      { t: '"得加钱。"', v: { dark: 3, lively: 2 } },
+      { t: '"给我一天，我回去收拾行李和告别。"', v: { warm: 3, obsess: 1, calm: 1 } }
+    ]
+  },
+  {
+    q: '用一句话形容你自己？',
+    o: [
+      { t: '"我很强，也很温柔。"', v: { strong: 3, warm: 3 } },
+      { t: '"我只是想被某个人记住。"', v: { loyal: 3, obsess: 3, warm: 1 } },
+      { t: '"别靠太近，会受伤。"', v: { distant: 4, dark: 2 } },
+      { t: '"活着就要有意思。"', v: { lively: 4, strong: 1 } },
+      { t: '"看起来很难搞，其实很好哄。"', v: { dark: 2, warm: 2, distant: 1 } },
+      { t: '"我这个人，嘴硬心软。"', v: { strong: 2, warm: 2, obsess: 1 } }
+    ]
+  },
+  {
+    q: '喜欢上一个人，你会？',
+    o: [
+      { t: '直接说，藏着多累', v: { strong: 3, lively: 2, warm: 1 } },
+      { t: '先观察很久，确认了才动', v: { calm: 3, obsess: 2 } },
+      { t: '嘴上不承认，行动上全是破绽', v: { obsess: 3, warm: 1, dark: 1 } },
+      { t: '不说。我只要能看着他/她就够了', v: { distant: 3, loyal: 3, warm: 1 } },
+      { t: '制造各种"巧合"，让 TA 先注意到我', v: { dark: 3, lively: 2 } },
+      { t: '把喜欢写进日记，谁也不给看', v: { obsess: 3, distant: 2 } }
+    ]
+  },
+  {
+    q: '和别人相处的距离，你习惯？',
+    o: [
+      { t: '很近，我喜欢黏着在意的人', v: { loyal: 3, warm: 3 } },
+      { t: '刚好的距离，不近不远', v: { calm: 3, distant: 1 } },
+      { t: '保持距离，太近我会不舒服', v: { distant: 4, dark: 1 } },
+      { t: '看人，遇到对的人可以很近', v: { loyal: 2, warm: 2, obsess: 1 } },
+      { t: '身体很近，但心可能很远', v: { distant: 2, dark: 2 } },
+      { t: '忽远忽近，看心情', v: { lively: 2, dark: 2, distant: 1 } }
+    ]
+  }
+];
+
+/* ---------------- 匹配算法 ----------------
+   题目里各维度的权重天然不均（温柔出现得多、外放出现得少），
+   直接用原始分做余弦会让结果偏向某几类角色。这里用两次标准化消除偏差：
+   1) 用户分 → 相对随机期望的 z 分数（各维度同尺度）
+   2) 角色分 → 跨 40 角色的 z 分数（各维度同等话语权）
+   -------------------------------------------------- */
+const USER_MU = [20.99, 22.26, 15.49, 14.76, 15.27, 16.98, 20.48, 14.26];
+const USER_SD = [5.46, 6.26, 5.69, 5.11, 5.28, 5.90, 6.55, 4.95];
+const CHAR_MU = [6.22, 7.08, 7.10, 7.22, 5.38, 5.25, 5.60, 6.78];
+const CHAR_SD = [2.36, 1.69, 2.36, 2.16, 2.76, 2.78, 2.52, 2.20];
+
+function scoreVector(answers) {
+  const s = {};
+  DIMS.forEach(d => { s[d] = 0; });
+  answers.forEach((pick, qi) => {
+    if (pick == null) return;
+    const opt = QUESTIONS[qi].o[pick];
+    for (const k in opt.v) s[k] += opt.v[k];
+  });
+  return DIMS.map(d => s[d]);
+}
+
+function center(v) {
+  const m = v.reduce((a, b) => a + b, 0) / v.length;
+  return v.map(x => x - m);
+}
+
+// 用户分 → 相对随机期望的 z 分数，再中心化
+function zUser(u) {
+  return center(u.map((x, i) => (x - USER_MU[i]) / USER_SD[i]));
+}
+
+// 角色分 → 跨角色的 z 分数，再中心化
+function zChar(c) {
+  return center(c.v.map((x, i) => (x - CHAR_MU[i]) / CHAR_SD[i]));
+}
+
+function cosine(a, b) {
+  let dot = 0, na = 0, nb = 0;
+  for (let i = 0; i < a.length; i++) {
+    dot += a[i] * b[i];
+    na += a[i] * a[i];
+    nb += b[i] * b[i];
+  }
+  if (!na || !nb) return 0;
+  return dot / Math.sqrt(na * nb);
+}
+
+function matchAll(answers) {
+  const u = scoreVector(answers);
+  const uz = zUser(u);
+  const list = CHARS.map(c => ({ c, raw: cosine(uz, zChar(c)) }));
+  list.sort((x, y) => y.raw - x.raw);
+
+  // 余弦 → 展示用的相似度：主结果落在 85~95%，第二三名自然低一档
+  let prev = 100;
+  list.forEach(item => {
+    const r = Math.max(0, Math.min(1, item.raw));
+    let pct = Math.round(100 * (0.55 + 0.45 * Math.pow(r, 0.85)));
+    pct = Math.min(99, Math.max(58, pct));
+    if (pct >= prev) pct = prev - 1;   // 保证名次之间不撞分
+    prev = pct;
+    item.pct = pct;
+  });
+  return { user: u, list };
+}
+
+/* ---------------- 视图 ---------------- */
+const state = { idx: 0, answers: new Array(QUESTIONS.length).fill(null) };
+const $ = sel => document.querySelector(sel);
+
+// #RRGGBB + 透明度 → rgba()，兼容老内核
+function hexA(hex, a) {
+  let h = hex.replace('#', '');
+  if (h.length === 3) h = h.split('').map(x => x + x).join('');
+  const r = parseInt(h.slice(0, 2), 16);
+  const g = parseInt(h.slice(2, 4), 16);
+  const b = parseInt(h.slice(4, 6), 16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+// 与白色混合，得到同色系的亮色（用于文字，保证深色背景上的对比度）
+function lighten(hex, t) {
+  let h = hex.replace('#', '');
+  if (h.length === 3) h = h.split('').map(x => x + x).join('');
+  const mix = v => Math.round(v + (255 - v) * t);
+  return `rgb(${mix(parseInt(h.slice(0, 2), 16))},${mix(parseInt(h.slice(2, 4), 16))},${mix(parseInt(h.slice(4, 6), 16))})`;
+}
+
+function applyAccent(hex) {
+  const s = document.documentElement.style;
+  s.setProperty('--accent', hex);
+  s.setProperty('--ac', hex);
+  s.setProperty('--ac-light', lighten(hex, 0.52));
+  const levels = { '--ac18': 0.18, '--ac35': 0.35, '--ac45': 0.45, '--ac55': 0.55,
+                   '--ac60': 0.60, '--ac65': 0.65, '--ac80': 0.80, '--ac85': 0.85 };
+  for (const k in levels) s.setProperty(k, hexA(hex, levels[k]));
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('is-active'));
+  document.getElementById(id).classList.add('is-active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[state.idx];
+  $('#qNow').textContent = state.idx + 1;
+  $('#qTotal').textContent = QUESTIONS.length;
+  $('#qFill').style.width = ((state.idx) / QUESTIONS.length * 100) + '%';
+  $('#qIndex').textContent = 'Q' + (state.idx + 1);
+
+  const card = $('#qCard');
+  card.classList.remove('anim');
+  void card.offsetWidth;
+  card.classList.add('anim');
+
+  $('#qText').textContent = q.q;
+
+  const opts = $('#qOpts');
+  opts.innerHTML = '';
+  q.o.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.innerHTML = `<span class="opt-key">${'ABCDEF'[i]}</span><span class="opt-text">${opt.t}</span>`;
+    if (state.answers[state.idx] === i) btn.classList.add('picked');
+    btn.addEventListener('click', () => pick(i, btn));
+    opts.appendChild(btn);
+  });
+
+  $('#btnBack').style.visibility = state.idx === 0 ? 'hidden' : 'visible';
+}
+
+let locked = false;
+function pick(i, btn) {
+  if (locked) return;
+  locked = true;
+  state.answers[state.idx] = i;
+  document.querySelectorAll('.opt').forEach(o => o.classList.remove('picked'));
+  btn.classList.add('picked');
+
+  setTimeout(() => {
+    locked = false;
+    if (state.idx < QUESTIONS.length - 1) {
+      state.idx++;
+      renderQuestion();
+    } else {
+      $('#qFill').style.width = '100%';
+      goResult();
+    }
+  }, 320);
+}
+
+function goResult() {
+  const { user, list } = matchAll(state.answers);
+  const top = list[0];
+  const c = top.c;
+
+  showScreen('s-result');
+
+  const ringC = 2 * Math.PI * 52;
+
+  applyAccent(c.c);
+
+  const ring = `
+    <div class="ring">
+      <svg viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="52" class="ring-bg"></circle>
+        <circle cx="60" cy="60" r="52" class="ring-fg" id="ringFg"
+                style="stroke-dasharray:${ringC.toFixed(1)};stroke-dashoffset:${ringC.toFixed(1)}"></circle>
+      </svg>
+      <div class="ring-num"><b id="ringNum">0</b><i>%</i></div>
+      <p class="ring-cap">灵魂重合度</p>
+    </div>`;
+
+  const others = list.slice(1, 3).map(o => `
+    <div class="mini">
+      <div class="mini-av" style="background:${hexA(o.c.c, 0.17)};border-color:${hexA(o.c.c, 0.38)}">${o.c.e}</div>
+      <div class="mini-info">
+        <b>${o.c.n}</b>
+        <span>《${o.c.a}》· ${o.pct}%</span>
+      </div>
+    </div>`).join('');
+
+  $('#resultBody').innerHTML = `
+    <p class="res-kicker">你的动漫人格是</p>
+
+    <div class="hero">
+      <div class="avatar" style="--ac:${c.c}">${c.e}</div>
+      <h2 class="hero-name">${c.n}</h2>
+      <p class="hero-anime">《${c.a}》</p>
+      <div class="tags">${c.t.map(t => `<span>${t}</span>`).join('')}</div>
+    </div>
+
+    ${ring}
+
+    <div class="panel">
+      <p class="panel-t">性格画像</p>
+      <p class="desc">${c.d}</p>
+      <blockquote class="quote">${c.q}</blockquote>
+    </div>
+
+    <div class="panel">
+      <p class="panel-t">为什么是你</p>
+      <p class="desc">${c.m}</p>
+      <div class="radar-wrap">
+        <svg class="radar" id="radar" viewBox="0 0 260 250"></svg>
+        <div class="legend">
+          <span><i class="dot you"></i>你</span>
+          <span><i class="dot him"></i>${c.n.split('·')[0]}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <p class="panel-t">你身上还有他们的影子</p>
+      <div class="minis">${others}</div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary" id="btnAgain">再测一次</button>
+      <button class="btn btn-ghost" id="btnCopy">复制结果</button>
+    </div>
+
+    <p class="foot">本测试为粉丝向娱乐内容，角色版权归原作者及出版方所有。</p>
+  `;
+
+  // 环形动画
+  const pct = top.pct;
+  requestAnimationFrame(() => {
+    const fg = document.getElementById('ringFg');
+    fg.style.transition = 'stroke-dashoffset 1.4s cubic-bezier(.22,.9,.25,1)';
+    fg.style.strokeDashoffset = (ringC * (1 - pct / 100)).toFixed(1);
+    animateNumber(document.getElementById('ringNum'), 0, pct, 1400);
+  });
+
+  // 雷达图：与匹配算法同源，都用 z 分数，两条线形状才可比
+  drawRadar(zUser(user), zChar(c), c.c);
+
+  document.getElementById('btnAgain').onclick = () => {
+    state.idx = 0;
+    state.answers = new Array(QUESTIONS.length).fill(null);
+    showScreen('s-start');
+  };
+
+  document.getElementById('btnCopy').onclick = () => {
+    const txt = `我的动漫人格是《${c.a}》的${c.n}（${pct}% 匹配）\n标签：${c.t.join(' / ')}\n${c.q}`;
+    const done = () => {
+      const b = document.getElementById('btnCopy');
+      b.textContent = '已复制 ✓';
+      setTimeout(() => { b.textContent = '复制结果'; }, 1600);
+    };
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(txt).then(done).catch(fallback);
+    } else { fallback(); }
+    function fallback() {
+      const ta = document.createElement('textarea');
+      ta.value = txt;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); done(); } catch (e) {}
+      document.body.removeChild(ta);
+    }
+  };
+}
+
+function animateNumber(el, from, to, dur) {
+  const t0 = performance.now();
+  function step(t) {
+    const p = Math.min(1, (t - t0) / dur);
+    const e = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(from + (to - from) * e);
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+function drawRadar(u, cv, color) {
+  const svg = document.getElementById('radar');
+  if (!svg) return;
+  const cx = 130, cy = 120, R = 78;
+  const n = DIMS.length;
+  const ang = i => -Math.PI / 2 + i * 2 * Math.PI / n;
+  // z 分数 → 半径（z 通常在 -2.2 ~ 2.2）
+  const mapR = z => Math.min(1, Math.max(0.07, (z + 2.2) / 4.4));
+  const pt = (i, r) => [cx + Math.cos(ang(i)) * r, cy + Math.sin(ang(i)) * r];
+
+  let html = '';
+
+  // 网格
+  [0.25, 0.5, 0.75, 1].forEach(k => {
+    const pts = DIMS.map((_, i) => pt(i, R * k).join(',')).join(' ');
+    html += `<polygon points="${pts}" fill="none" stroke="rgba(40,90,140,0.14)" stroke-width="1"/>`;
+  });
+  DIMS.forEach((_, i) => {
+    const [x, y] = pt(i, R);
+    html += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="rgba(40,90,140,0.12)"/>`;
+  });
+
+  // 角色：虚线，避免和用户实线混在一起
+  const cPts = cv.map((v, i) => pt(i, R * mapR(v)).join(',')).join(' ');
+  html += `<polygon points="${cPts}" fill="${hexA(color, 0.10)}" stroke="${color}" stroke-width="1.5"
+            stroke-dasharray="4 3" stroke-linejoin="round"/>`;
+
+  // 用户：实线 + 顶点
+  const uPts = u.map((v, i) => pt(i, R * mapR(v)).join(',')).join(' ');
+  html += `<polygon points="${uPts}" fill="var(--pink)" fill-opacity="0.17" stroke="var(--pink)"
+            stroke-width="2" stroke-linejoin="round"/>`;
+  u.forEach((v, i) => {
+    const [x, y] = pt(i, R * mapR(v));
+    html += `<circle cx="${x}" cy="${y}" r="2.4" fill="#fff" stroke="var(--pink)" stroke-width="1.6"/>`;
+  });
+
+  // 标签
+  DIMS.forEach((d, i) => {
+    const [x, y] = pt(i, R + 22);
+    html += `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle"
+      font-size="11" fill="#3d5d7d">${DIM_LABEL[d]}</text>`;
+  });
+
+  svg.innerHTML = html;
+}
+
+/* ---------------- 题目随机排序 ---------------- */
+// 每次开测都打乱题目顺序（Fisher-Yates）
+function shuffleQuestions() {
+  for (let i = QUESTIONS.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [QUESTIONS[i], QUESTIONS[j]] = [QUESTIONS[j], QUESTIONS[i]];
+  }
+}
+
+/* ---------------- 启动 ---------------- */
+document.addEventListener('DOMContentLoaded', () => {
+  const CODE = '8800';   // 固定提取码
+  $('#btnStart').addEventListener('click', () => {
+    const input = $('#gateCode');
+    const err = $('#gateErr');
+    if (input.value.trim() !== CODE) {
+      err.classList.add('show');
+      input.classList.remove('err');
+      void input.offsetWidth;          // 重触发抖动动画
+      input.classList.add('err');
+      input.focus();
+      return;
+    }
+    err.classList.remove('show');
+    input.classList.remove('err');
+    shuffleQuestions();
+    state.answers = new Array(QUESTIONS.length).fill(null);
+    showScreen('s-quiz');
+    renderQuestion();
+  });
+
+  // 提取码输入框：只允许数字，回车直接触发开始
+  const gateInput = $('#gateCode');
+  gateInput.addEventListener('input', () => {
+    gateInput.value = gateInput.value.replace(/[^0-9]/g, '').slice(0, 4);
+  });
+  gateInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') $('#btnStart').click();
+  });
+
+  $('#btnBack').addEventListener('click', () => {
+    if (state.idx > 0) { state.idx--; renderQuestion(); }
+  });
+  $('#btnQuit').addEventListener('click', () => {
+    state.idx = 0;
+    state.answers = new Array(QUESTIONS.length).fill(null);
+    showScreen('s-start');
+  });
+
+  // 键盘
+  document.addEventListener('keydown', e => {
+    if (!$('#s-quiz').classList.contains('is-active')) return;
+    if (['1', '2', '3', '4', '5', '6'].includes(e.key)) {
+      const btns = document.querySelectorAll('.opt');
+      const i = parseInt(e.key, 10) - 1;
+      if (btns[i]) btns[i].click();
+    }
+    if (e.key === 'ArrowLeft') $('#btnBack').click();
+  });
+});
+
+</script>
+</body>
+</html>
