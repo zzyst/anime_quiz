@@ -39,6 +39,7 @@ body {
   line-height: 1.7;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
 }
 .bg {
   position: fixed;
@@ -173,9 +174,11 @@ body {
   box-shadow: 0 10px 32px -10px rgba(90, 168, 240, 0.7), inset 0 1px 0 rgba(255,255,255,.25);
 }
 
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 16px 42px -12px rgba(90, 168, 240, 0.85), inset 0 1px 0 rgba(255,255,255,.3);
+@media (hover: hover) and (pointer: fine) {
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 42px -12px rgba(90, 168, 240, 0.85), inset 0 1px 0 rgba(255,255,255,.3);
+  }
 }
 
 .btn-primary:active { transform: translateY(0) scale(0.985); }
@@ -186,7 +189,9 @@ body {
   border: 1px solid var(--line);
 }
 
-.btn-ghost:hover { background: rgba(255, 255, 255, 0.85); transform: translateY(-2px); }
+@media (hover: hover) and (pointer: fine) {
+  .btn-ghost:hover { background: rgba(255, 255, 255, 0.85); transform: translateY(-2px); }
+}
 
 .hint {
   margin-top: 18px;
@@ -351,10 +356,15 @@ body {
   transition: border-color 0.22s, background 0.22s, transform 0.22s, box-shadow 0.22s;
 }
 
-.opt:hover {
-  border-color: rgba(108, 183, 255, 0.5);
-  background: rgba(108, 183, 255, 0.07);
-  transform: translateX(3px);
+/* 仅在真正支持悬停的设备（鼠标/触控板）上启用，避免手机触摸后状态卡住 */
+@media (hover: hover) and (pointer: fine) {
+  .opt:hover {
+    border-color: rgba(108, 183, 255, 0.5);
+    background: rgba(108, 183, 255, 0.07);
+    transform: translateX(3px);
+  }
+
+  .opt:hover .opt-key { color: var(--pink); border-color: rgba(108, 183, 255, 0.45); }
 }
 
 .opt-key {
@@ -369,8 +379,6 @@ body {
   color: var(--ink2);
   transition: all 0.22s;
 }
-
-.opt:hover .opt-key { color: var(--pink); border-color: rgba(108,183,255,.45); }
 
 .opt.picked {
   border-color: rgba(108, 183, 255, 0.85);
